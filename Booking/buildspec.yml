@@ -1,0 +1,12 @@
+version: 0.2
+phases:
+  install:
+    commands:
+      - npm install
+      - aws cloudformation package --template-file sam-booking.yml --s3-bucket $S3Bucket
+                                   --output-template-file output-sam-template.yml
+artifacts:
+  type: zip
+  files:
+    - output-sam-template.yml
+    - sam-config.json

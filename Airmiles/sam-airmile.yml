@@ -1,0 +1,75 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  NonProdAccount:
+    Description: AWS AccountNumber for the Non Prod Account
+    Type: Number
+
+Resources:
+  CUSTOMLOOKUP:
+    Type: Custom::Lookup
+    Properties:
+      ServiceToken: !ImportValue custom-lookup-exports
+      loglevel: info
+
+  LambdaResourcePolicy:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt PostAirmileFunction.Arn
+      Principal: sns.amazonaws.com
+      Action: lambda:InvokeFunction
+      SourceArn : !GetAtt CUSTOMLOOKUP.booking-lambda-BookingTopicArn
+
+  PostAirmileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: post-airmiles-lambda.handler
+      Runtime: python2.7
+      Policies: AmazonDynamoDBFullAccess
+      Events:
+        SubmitBooking:
+          Type: SNS
+          Properties:
+            Topic:
+              !GetAtt CUSTOMLOOKUP.booking-lambda-BookingTopicArn
+      Environment:
+        Variables: 
+          TABLE_NAME: !Ref AirmileDBTable
+
+  GetAirmileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: get-airmiles-lambda.handler
+      Runtime: python2.7
+      Policies: AmazonDynamoDBFullAccess
+      Environment:
+        Variables: 
+          TABLE_NAME: !Ref AirmileDBTable
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /airmiles/{bookingid}
+            Method: get
+
+  AirmileDBTable:
+     Type: AWS::DynamoDB::Table
+     Properties: 
+      AttributeDefinitions: 
+        - 
+          AttributeName: "bookingid"
+          AttributeType: "S"
+      KeySchema: 
+        - AttributeName: "bookingid"
+          KeyType: HASH
+      ProvisionedThroughput: 
+         ReadCapacityUnits: 5
+         WriteCapacityUnits: 5
+
+Outputs:
+    AirmileAPI:
+        Description: Airmile API Endpoint
+        Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com'
+        Export:
+            Name: AirmileAPI

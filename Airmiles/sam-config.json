@@ -1,0 +1,15 @@
+{
+    "Parameters": {
+        "NonProdAccount": "12345"
+    },
+    "StackPolicy": {
+        "Statement": [
+            {
+                "Action": "Update:*",
+                "Effect": "Allow",
+                "Principal": "*",
+                "Resource": "*"
+            }
+        ]
+    }
+}

@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS CloudFormation ElasticBeanstalk Node.js'
+Parameters:
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the AWS Elastic
+      Beanstalk instance
+    Type: String
+  S3BucketName:
+    Description: Name of the S3 bucket containing the source code for the Flight Booking Node.js Application
+    Type: String
+  S3BucketKey:
+    Description: Name of the S3 bucket key containing the source code for the Flight Booking Node.js Application
+    Type: String
+
+Resources:
+
+  CustomStackResourceLookup:
+    Type: Custom::Lookup
+    Properties:
+      ServiceToken: !ImportValue custom-lookup-stack-resource
+      StackId: FlightBooking
+      loglevel: debug
+
+  CustomDynamoLookup:
+    Type: Custom::Lookup
+    Properties:
+      ServiceToken: !ImportValue custom-lookup-dynamo
+      StackId: Airmiles
+      loglevel: debug
+
+  CustomStoreStackResources:
+    Type: Custom::Store
+    Properties:
+      ServiceToken: !ImportValue custom-store-stack-resources
+      StackId: !Sub '${AWS::StackName}'
+      loglevel: debug
+
+  webApplication:
+    Type: AWS::ElasticBeanstalk::Application
+    Properties:
+      Description: AWS Elastic Beanstalk Flight Booking Node.js Application
+  webApplicationVersion:
+    Type: AWS::ElasticBeanstalk::ApplicationVersion
+    Properties:
+      ApplicationName:
+        Ref: webApplication
+      Description: AWS Elastic Beanstalk Flight Booking Node.js Application Version
+      SourceBundle:
+        S3Bucket: !Ref S3BucketName
+        S3Key: !Ref S3BucketKey
+  webConfigurationTemplate:
+    Type: AWS::ElasticBeanstalk::ConfigurationTemplate
+    Properties:
+      ApplicationName:
+        Ref: webApplication
+      Description: AWS Elastic Beanstalk Flight Booking Node.js Application Configuration Template
+      OptionSettings:
+      - Namespace: aws:autoscaling:launchconfiguration
+        OptionName: EC2KeyName
+        Value: !Ref KeyName
+      - Namespace: aws:elasticbeanstalk:application:environment
+        OptionName: FLIGHT_BOOKING_API_URL
+        Value: !Join [ "" , ["https://", !GetAtt CustomStackResourceLookup.ServerlessRestApi, ".execute-api.", !Ref "AWS::Region", ".amazonaws.com"]]
+      - Namespace: aws:elasticbeanstalk:application:environment
+        OptionName: AIRMILES_API_URL
+        Value: !Join [ "" , ["https://", !GetAtt CustomDynamoLookup.ServerlessRestApi, ".execute-api.", !Ref "AWS::Region", ".amazonaws.com"]]
+      SolutionStackName: 64bit Amazon Linux 2017.03 v4.1.0 running Node.js
+  webEnvironment:
+    Type: AWS::ElasticBeanstalk::Environment
+    Properties:
+      ApplicationName:
+        Ref: webApplication
+      Description: AWS Elastic Beanstalk Environment Running Flight Booking Node.js Application
+      TemplateName:
+        Ref: webConfigurationTemplate
+      VersionLabel:
+        Ref: webApplicationVersion
+
+Outputs:
+  URL:
+    Description: URL of the AWS Elastic Beanstalk Environment
+    Value: !GetAtt 'webEnvironment.EndpointURL'
+  FlightBookingAPIURL:
+    Description: URL of the Flight Booking API
+    Value: !Join [ "" , ["https://", !GetAtt CustomStackResourceLookup.ServerlessRestApi, ".execute-api.", !Ref "AWS::Region", ".amazonaws.com"]]
+  AirmilesAPIURL:
+    Description: URL of the Airmiles API
+    Value: !Join [ "" , ["https://", !GetAtt CustomDynamoLookup.ServerlessRestApi, ".execute-api.", !Ref "AWS::Region", ".amazonaws.com"]]
