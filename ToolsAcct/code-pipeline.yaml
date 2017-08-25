@@ -232,7 +232,7 @@ Resources:
                 ActionMode: CHANGE_SET_REPLACE
                 StackName: !Join ['-',[!Ref ProjectName, 'lambda']]
                 Capabilities: CAPABILITY_NAMED_IAM
-                TemplatePath: BuildOutput::output-sam-template.yml
+                TemplatePath: BuildOutput::output-sam-template.yaml
                 TemplateConfiguration: BuildOutput::sam-config.json
                 RoleArn: !Ref NonProdCloudFormationServiceRole
               InputArtifacts:

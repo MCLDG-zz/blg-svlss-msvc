@@ -74,7 +74,6 @@ Resources:
               AWS:
                 - !Sub arn:aws:iam::${NonProdAccount}:root
           Action:
-            - sns:Publish
             - sns:Subscribe
             - sns:ListSubscriptionsByTopic
           Resource: !Ref BookingTopic

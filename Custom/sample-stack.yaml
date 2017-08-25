@@ -7,7 +7,7 @@
 #  limitations under the License.
 AWSTemplateFormatVersion: "2010-09-09"
 Resources:
-  CUSTOMLOOKUP:
+  CustomLookup:
     Type: Custom::Lookup
     Properties:
       ServiceToken: !ImportValue custom-lookup-exports
@@ -15,6 +15,6 @@ Resources:
 
 Outputs:
   BookingAPI:
-    Value: !GetAtt CUSTOMLOOKUP.custom-lookup-exports
+    Value: !GetAtt CustomLookup.custom-lookup-exports
   BookingTopicArn:
-    Value: !GetAtt CUSTOMLOOKUP.toolsacct-codepipeline-cloudformation-role-CustomCrossAccountServiceRole
+    Value: !GetAtt CustomLookup.toolsacct-codepipeline-cloudformation-role-CustomCrossAccountServiceRole

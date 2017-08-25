@@ -1,7 +1,5 @@
 # Cross Account Microservices with CodePipeline, CodeBuild and Lambda
 
-
-
 [![](images/Serverless-Microservices.png)][architecture]
 
 ## Deploying the serverless microservices sample application
@@ -53,13 +51,15 @@ From your terminal application, execute the following command:
 
 This will create stacks in all three accounts. Wait until all stacks are successfully created.
 
-#### 5. Copy code and push to AWS CodeCommit
+#### 5. Copy the microservice source code and push to AWS CodeCommit
 
 In the AWS Console, in the Tools account, in the region specified in single-click-cross-account-pipeline.sh, select
 the CloudFormation service and find the 'booking-pipeline' stack.
 
 Copy the value of this stack output variable: SourceCodeCommitCloneUrlHttp
-From your terminal application, execute the following command:
+In a directory in your terminal application where you want to clone the application repository, execute the following command. 
+Note that this clones an empty GIT repo for the Booking microservice, into which you'll copy the Booking source code from 
+the blg-svlss-msvc.git repo (you may have to adjust the cp -R statement below if you use a different directory structure):
 
 ```console
 git clone <value of the SourceCodeCommitCloneUrlHttp stack output variable>
@@ -71,13 +71,15 @@ git push
 ```
 
 This will push the source code for the Booking microservice to CodeCommit, and trigger the booking CodePipeline. You can
-find the CodePipeline in the console by clicking the value of the PipelineUrl stack output variable in the 'booking-pipeline' stack
+find the CodePipeline in the AWS console by clicking the value of the PipelineUrl stack output variable in the 'booking-pipeline' stack
 
-#### 5. Monitor deployment of the Booking microservice
+#### 6. Monitor deployment of the Booking microservice
 
 In the AWS Console, in the Tools account, monitor the progress of the 'booking-pipeline' stack. Once the pipeline reaches the
 DeployToTest stage, you can login to the Booking account in the AWS Console and view the status of the CloudFormation
 deployment.
+
+#### 7. Repeat steps 5 & 6 for the Airmiles microservice
 
 Wait until the Booking CodePipeline is complete, then repeat steps 5 & 6 for the Airmiles microservice, using the stack
 output values from the 'airmiles-pipeline' stack.

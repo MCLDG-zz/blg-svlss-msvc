@@ -29,36 +29,36 @@ echo -e "Airmiles CMK Arn: $AirmilesCMKArn"
 
 #cross account roles for booking
 echo -e "Creating cross-account roles in Booking Non-Prod Account"
-aws cloudformation deploy --stack-name toolsacct-codepipeline-cloudformation-role --template-file NonProdAccount/toolsacct-codepipeline-cloudformation-deployer.yaml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides ToolsAccount=$ToolsAccount NonProdAccount=$AirmilesNonProdAccount CMKARN=$BookingCMKArn S3Bucket=$BookingS3Bucket --profile $BookingNonProdAccountProfile
+aws cloudformation deploy --stack-name ${BookingProject}-toolsacct-codepipeline-cloudformation-role --template-file NonProdAccount/toolsacct-codepipeline-cloudformation-deployer.yaml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides ToolsAccount=$ToolsAccount NonProdAccount=$AirmilesNonProdAccount CMKARN=$BookingCMKArn S3Bucket=$BookingS3Bucket --profile $BookingNonProdAccountProfile
 
-BookingCloudFormationServiceRole=$(aws cloudformation describe-stacks --stack-name toolsacct-codepipeline-cloudformation-role --profile $BookingNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CloudFormationServiceRole`].OutputValue' --output text)
+BookingCloudFormationServiceRole=$(aws cloudformation describe-stacks --stack-name ${BookingProject}-toolsacct-codepipeline-cloudformation-role --profile $BookingNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CloudFormationServiceRole`].OutputValue' --output text)
 echo -e "BookingCloudFormationServiceRole: $BookingCloudFormationServiceRole"
 
-BookingCodePipelineActionServiceRole=$(aws cloudformation describe-stacks --stack-name toolsacct-codepipeline-cloudformation-role --profile $BookingNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CodePipelineActionServiceRole`].OutputValue' --output text)
+BookingCodePipelineActionServiceRole=$(aws cloudformation describe-stacks --stack-name ${BookingProject}-toolsacct-codepipeline-cloudformation-role --profile $BookingNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CodePipelineActionServiceRole`].OutputValue' --output text)
 echo -e "BookingCodePipelineActionServiceRole: $BookingCodePipelineActionServiceRole"
 
-BookingCustomCrossAccountServiceRole=$(aws cloudformation describe-stacks --stack-name toolsacct-codepipeline-cloudformation-role --profile $BookingNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CustomCrossAccountServiceRole`].OutputValue' --output text)
+BookingCustomCrossAccountServiceRole=$(aws cloudformation describe-stacks --stack-name ${BookingProject}-toolsacct-codepipeline-cloudformation-role --profile $BookingNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CustomCrossAccountServiceRole`].OutputValue' --output text)
 echo -e "BookingCustomCrossAccountServiceRole: $BookingCustomCrossAccountServiceRole"
 
 #cross account roles for airmiles
 echo -e "Creating cross-account roles in Airmiles Non-Prod Account"
-aws cloudformation deploy --stack-name toolsacct-codepipeline-cloudformation-role --template-file NonProdAccount/toolsacct-codepipeline-cloudformation-deployer.yaml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides ToolsAccount=$ToolsAccount NonProdAccount=$BookingNonProdAccount CMKARN=$AirmilesCMKArn S3Bucket=$AirmilesS3Bucket --profile $AirmilesNonProdAccountProfile
+aws cloudformation deploy --stack-name ${AirmilesProject}-toolsacct-codepipeline-cloudformation-role --template-file NonProdAccount/toolsacct-codepipeline-cloudformation-deployer.yaml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides ToolsAccount=$ToolsAccount NonProdAccount=$BookingNonProdAccount CMKARN=$AirmilesCMKArn S3Bucket=$AirmilesS3Bucket --profile $AirmilesNonProdAccountProfile
 
-AirmilesCloudFormationServiceRole=$(aws cloudformation describe-stacks --stack-name toolsacct-codepipeline-cloudformation-role --profile $AirmilesNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CloudFormationServiceRole`].OutputValue' --output text)
+AirmilesCloudFormationServiceRole=$(aws cloudformation describe-stacks --stack-name ${AirmilesProject}-toolsacct-codepipeline-cloudformation-role --profile $AirmilesNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CloudFormationServiceRole`].OutputValue' --output text)
 echo -e "AirmilesCloudFormationServiceRole: $AirmilesCloudFormationServiceRole"
 
-AirmilesCodePipelineActionServiceRole=$(aws cloudformation describe-stacks --stack-name toolsacct-codepipeline-cloudformation-role --profile $AirmilesNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CodePipelineActionServiceRole`].OutputValue' --output text)
+AirmilesCodePipelineActionServiceRole=$(aws cloudformation describe-stacks --stack-name ${AirmilesProject}-toolsacct-codepipeline-cloudformation-role --profile $AirmilesNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CodePipelineActionServiceRole`].OutputValue' --output text)
 echo -e "AirmilesCodePipelineActionServiceRole: $AirmilesCodePipelineActionServiceRole"
 
-AirmilesCustomCrossAccountServiceRole=$(aws cloudformation describe-stacks --stack-name toolsacct-codepipeline-cloudformation-role --profile $AirmilesNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CustomCrossAccountServiceRole`].OutputValue' --output text)
+AirmilesCustomCrossAccountServiceRole=$(aws cloudformation describe-stacks --stack-name ${AirmilesProject}-toolsacct-codepipeline-cloudformation-role --profile $AirmilesNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CustomCrossAccountServiceRole`].OutputValue' --output text)
 echo -e "AirmilesCustomCrossAccountServiceRole: $AirmilesCustomCrossAccountServiceRole"
 
 #deploy custom resource to booking account - change this to use stack sets
 echo -e "creating custom resource stack in booking account"
 cd Custom
 pip install -r requirements.txt -t .
-aws cloudformation package --template-file custom-lookup-exports.yml --s3-bucket $S3_TMP_BUCKET --s3-prefix custom --output-template-file output-custom-lookup-exports.yml --profile $BookingNonProdAccountProfile
-aws cloudformation deploy --stack-name ${BookingProject}-custom --template-file output-custom-lookup-exports.yml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides CustomCrossAccountServiceRole=$AirmilesCustomCrossAccountServiceRole --profile $BookingNonProdAccountProfile
+aws cloudformation package --template-file custom-lookup-exports.yaml --s3-bucket $S3_TMP_BUCKET --s3-prefix custom --output-template-file output-custom-lookup-exports.yaml --profile $BookingNonProdAccountProfile
+aws cloudformation deploy --stack-name ${BookingProject}-custom --template-file output-custom-lookup-exports.yaml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides CustomCrossAccountServiceRole=$AirmilesCustomCrossAccountServiceRole --profile $BookingNonProdAccountProfile
 BookingCustomLookupExportsLambdaArn=$(aws cloudformation describe-stacks --stack-name ${BookingProject}-custom --profile $BookingNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CustomLookupExportsLambdaArn`].OutputValue' --output text)
 echo -e "BookingCustomLookupExportsLambdaArn: $BookingCustomLookupExportsLambdaArn"
 cd ..
@@ -66,13 +66,13 @@ cd ..
 #deploy custom resource to airmiles account
 echo -e "creating custom resource stack in airmiles account"
 cd Custom
-aws cloudformation package --template-file custom-lookup-exports.yml --s3-bucket $S3_TMP_BUCKET --s3-prefix custom --output-template-file output-custom-lookup-exports.yml --profile $AirmilesNonProdAccountProfile
-aws cloudformation deploy --stack-name ${AirmilesProject}-custom --template-file output-custom-lookup-exports.yml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides CustomCrossAccountServiceRole=$BookingCustomCrossAccountServiceRole --profile $AirmilesNonProdAccountProfile
+aws cloudformation package --template-file custom-lookup-exports.yaml --s3-bucket $S3_TMP_BUCKET --s3-prefix custom --output-template-file output-custom-lookup-exports.yaml --profile $AirmilesNonProdAccountProfile
+aws cloudformation deploy --stack-name ${AirmilesProject}-custom --template-file output-custom-lookup-exports.yaml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides CustomCrossAccountServiceRole=$BookingCustomCrossAccountServiceRole --profile $AirmilesNonProdAccountProfile
 AirmilesCustomLookupExportsLambdaArn=$(aws cloudformation describe-stacks --stack-name ${AirmilesProject}-custom --profile $AirmilesNonProdAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CustomLookupExportsLambdaArn`].OutputValue' --output text)
 echo -e "AirmilesCustomLookupExportsLambdaArn: $AirmilesCustomLookupExportsLambdaArn"
 cd ..
 
-#update the sam-config.json files with the Non Prod Account number. This is used in sam-booking.yml to allow
+#update the sam-config.json files with the Non Prod Account number. This is used in sam-booking.yaml to allow
 #cross-account Lambda subscription from Lambda in Airmiles to SNS Topic in Booking
 sed -i -e "s/12345678/$AirmilesNonProdAccount/g" Booking/sam-config.json
 

@@ -7,7 +7,7 @@ Parameters:
     Type: Number
 
 Resources:
-  CUSTOMLOOKUP:
+  CustomLookup:
     Type: Custom::Lookup
     Properties:
       ServiceToken: !ImportValue custom-lookup-exports
@@ -19,7 +19,7 @@ Resources:
       FunctionName: !GetAtt PostAirmileFunction.Arn
       Principal: sns.amazonaws.com
       Action: lambda:InvokeFunction
-      SourceArn : !GetAtt CUSTOMLOOKUP.booking-lambda-BookingTopicArn
+      SourceArn : !GetAtt CustomLookup.booking-lambda-BookingTopicArn
 
   PostAirmileFunction:
     Type: AWS::Serverless::Function
@@ -32,7 +32,7 @@ Resources:
           Type: SNS
           Properties:
             Topic:
-              !GetAtt CUSTOMLOOKUP.booking-lambda-BookingTopicArn
+              !GetAtt CustomLookup.booking-lambda-BookingTopicArn
       Environment:
         Variables: 
           TABLE_NAME: !Ref AirmileDBTable
