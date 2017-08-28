@@ -99,7 +99,7 @@ curl -H "Content-Type: application/json" -X POST -d '{"first_name":"Michael","la
 this should return a booking_number, such as "7NIXnSSI". You can follow this up with a GET on the API endpoint:
 
 ```bash
-<BookingAPI stack output value>/Prod/bookings, e.g. https://lv71x6qei8.execute-api.us-east-1.amazonaws.com/Prod/bookings
+curl <BookingAPI stack output value>/Prod/bookings, e.g. curl https://lv71x6qei8.execute-api.us-east-1.amazonaws.com/Prod/bookings
 ```
 
 after posting to bookings, the booking information should flow via SNS to airmiles, so check the airmiles endpoint for the booking_number
