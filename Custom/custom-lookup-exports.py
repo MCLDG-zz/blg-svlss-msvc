@@ -6,28 +6,27 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Looks up stack exports
+# Looks up stack export values in CloudFormation stacks
 
 from __future__ import print_function
 
 import crhelper
 import os
 import boto3
-import botocore.exceptions
 
 # initialise logger
 print('Loading function')
 logger = crhelper.log_config({"RequestId": "CONTAINER_INIT"})
 logger.info('Logging configured')
+
 # set global to track init failures
 init_failed = False
 
 try:
-    # this Lambda will query CloudFormation stacks in other accounts, so we need a cross account connection here.
-    # currently, only 2 ARNs are passed in CUSTOM_CROSS_ACCOUNT_ROLE_ARN, one for the account the Lambda is
-    # executing in (which is ignored) and the other which contains the role ARN to be assumed. This Lambda could
-    # change to query CloudFormation templates in many accounts by looping through the ARNs in CUSTOM_CROSS_ACCOUNT_ROLE_ARN
-    # and appending to the list of stack exports.
+    # this Lambda will query CloudFormation stacks in other accounts, so we need a cross account connection.
+    # A cross-account role ARN is passed in CUSTOM_CROSS_ACCOUNT_ROLE_ARN, which contains the role ARN to
+    # be assumed. This Lambda could change to query CloudFormation stacks in many accounts by looping
+    # through the ARNs in CUSTOM_CROSS_ACCOUNT_ROLE_ARN and appending to the list of stack exports.
     print('assuming role in different account. Role ARN is: ' + os.environ['CUSTOM_CROSS_ACCOUNT_ROLE_ARN'])
 
     sts = boto3.client('sts')
@@ -51,14 +50,12 @@ except Exception as e:
 
 
 def create(event, context):
-#    exportname = event['ResourceProperties']['ExportName']
     response_data = get_exports()
     physical_resource_id = 'customResourceId'
     return physical_resource_id, response_data
 
 
 def update(event, context):
-#    exportname = event['ResourceProperties']['ExportName']
     response_data = get_exports()
     physical_resource_id = event['PhysicalResourceId']
     return physical_resource_id, response_data
@@ -94,11 +91,6 @@ def handler(event, context):
     global logger
 #    logger = crhelper.log_config(event)
     print('CloudFormation event received: %s' % str(event))
-    # if 'ExportName' not in event:
-    #     # throw an exception; this will cause crhelper to return a FAILED notification to CloudFormation
-    #     # respond with the lookup information only if the stack is being created or updated
-    #     raise botocore.exceptions.ValidationError("Expected parameter 'ExportName' not passed to custom resource in CloudFormation event")
 
     return crhelper.cfn_handler(event, context, create, update, delete, logger, init_failed)
-
 

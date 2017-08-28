@@ -34,23 +34,23 @@ def handler(event, context):
     for record in event['Records']:
         if 'aws:sns' == record['EventSource'] and record['Sns']['Message']:
             json_msg = json.loads(record['Sns']['Message'])
-            bookingid = str(json_msg['bookingid'])
-            odfrom = json_msg['from']
-            odto = json_msg['to']
-            flighttimestamp = json_msg['flighttimestamp']
+            booking_number = str(json_msg['booking_number'])
+            from_airport = json_msg['from_airport']
+            to_airport = json_msg['to_airport']
+            departure_date = json_msg['departure_date']
             airmiles = random.randint(50, 1000) 
-            print("got booking info from sns: " + str(bookingid) + odfrom + odto + flighttimestamp + str(airmiles))
+            print("got booking info from sns: " + str(booking_number) + from_airport + to_airport + departure_date + str(airmiles))
 
         # insert into DynamoDB
         table = dynamodb.Table(TABLE_NAME)
 
         response = table.put_item(
             Item={
-                'bookingid': bookingid,
-                'odfrom': odfrom,
-                'odto': odto,
-                'flighttimestamp': flighttimestamp,
-                'airmiles': int(math.floor(airmiles))
+                'booking_number': booking_number,
+                'from_airport': from_airport,
+                'to_airport': to_airport,
+                'departure_date': departure_date,
+                'airmiles': str(int(math.floor(airmiles)))
             }
         )
         print("PutItem succeeded. Response is: " + str(response))

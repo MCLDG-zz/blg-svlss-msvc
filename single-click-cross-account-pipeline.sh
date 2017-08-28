@@ -14,16 +14,16 @@ S3_TMP_BUCKET=mcdg-blog-bucket
 #pre requisites for booking
 echo -e "creating pre-reqs stack for booking"
 aws cloudformation deploy --stack-name ${BookingProject}-pre-reqs --template-file ToolsAcct/pre-reqs.yaml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides ProjectName=$BookingProject NonProdAccount=$BookingNonProdAccount --profile $ToolsAccountProfile
-BookingS3Bucket=$(aws cloudformation describe-stacks --stack-name ${BookingProject}-pre-reqs --query 'Stacks[0].Outputs[?OutputKey==`ArtifactBucket`].OutputValue' --output text)
-BookingCMKArn=$(aws cloudformation describe-stacks --stack-name ${BookingProject}-pre-reqs --query 'Stacks[0].Outputs[?OutputKey==`CMK`].OutputValue' --output text)
+BookingS3Bucket=$(aws cloudformation describe-stacks --stack-name ${BookingProject}-pre-reqs --profile $ToolsAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`ArtifactBucket`].OutputValue' --output text)
+BookingCMKArn=$(aws cloudformation describe-stacks --stack-name ${BookingProject}-pre-reqs --profile $ToolsAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CMK`].OutputValue' --output text)
 echo -e "Booking S3 artifact bucket name: $BookingS3Bucket"
 echo -e "Booking CMK Arn: $BookingCMKArn"
 
 #pre requisites for airmiles
 echo -e "creating pre-reqs stack for airmiles"
 aws cloudformation deploy --stack-name ${AirmilesProject}-pre-reqs --template-file ToolsAcct/pre-reqs.yaml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides ProjectName=$AirmilesProject NonProdAccount=$AirmilesNonProdAccount --profile $ToolsAccountProfile
-AirmilesS3Bucket=$(aws cloudformation describe-stacks --stack-name ${AirmilesProject}-pre-reqs --query 'Stacks[0].Outputs[?OutputKey==`ArtifactBucket`].OutputValue' --output text)
-AirmilesCMKArn=$(aws cloudformation describe-stacks --stack-name ${AirmilesProject}-pre-reqs --query 'Stacks[0].Outputs[?OutputKey==`CMK`].OutputValue' --output text)
+AirmilesS3Bucket=$(aws cloudformation describe-stacks --stack-name ${AirmilesProject}-pre-reqs --profile $ToolsAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`ArtifactBucket`].OutputValue' --output text)
+AirmilesCMKArn=$(aws cloudformation describe-stacks --stack-name ${AirmilesProject}-pre-reqs --profile $ToolsAccountProfile --query 'Stacks[0].Outputs[?OutputKey==`CMK`].OutputValue' --output text)
 echo -e "Airmiles S3 artifact bucket name: $AirmilesS3Bucket"
 echo -e "Airmiles CMK Arn: $AirmilesCMKArn"
 

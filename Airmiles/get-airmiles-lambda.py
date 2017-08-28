@@ -30,15 +30,13 @@ def handler(event, context):
     print("Received event: " + json.dumps(event, indent=2))
 
     # get booking id
-    bookingid = event['pathParameters']['bookingid']
-    print("bookingid: " + str(bookingid))
+    booking_number = event['pathParameters']['bookingid']
+    print("booking_number: " + str(booking_number))
 
     table = dynamodb.Table(TABLE_NAME)
     response = table.get_item(
         Key={
-            "bookingid": {
-                'S': bookingid
-            }
+            "booking_number": booking_number
         }
     )
 

@@ -85,10 +85,10 @@ Resources:
      Properties:
       AttributeDefinitions:
         -
-          AttributeName: "bookingid"
+          AttributeName: "booking_number"
           AttributeType: "S"
       KeySchema:
-        - AttributeName: "bookingid"
+        - AttributeName: "booking_number"
           KeyType: HASH
       ProvisionedThroughput:
          ReadCapacityUnits: 5

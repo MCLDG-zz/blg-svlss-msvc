@@ -25,7 +25,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: post-airmiles-lambda.handler
-      Runtime: python2.7
+      Runtime: python3.6
       Policies: AmazonDynamoDBFullAccess
       Events:
         SubmitBooking:
@@ -41,7 +41,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: get-airmiles-lambda.handler
-      Runtime: python2.7
+      Runtime: python3.6
       Policies: AmazonDynamoDBFullAccess
       Environment:
         Variables: 
@@ -58,10 +58,10 @@ Resources:
      Properties: 
       AttributeDefinitions: 
         - 
-          AttributeName: "bookingid"
+          AttributeName: "booking_number"
           AttributeType: "S"
       KeySchema: 
-        - AttributeName: "bookingid"
+        - AttributeName: "booking_number"
           KeyType: HASH
       ProvisionedThroughput: 
          ReadCapacityUnits: 5

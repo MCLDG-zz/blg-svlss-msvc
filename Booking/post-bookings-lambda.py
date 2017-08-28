@@ -39,38 +39,39 @@ def randomString(length):
 def handler(event, context):
     print("From API G/W: " + event)
     body = event['body']
-    firstname = body['first_name']
-    lastname = body['last_name']
-    odfrom = body['from_airport']
-    odto = body['to_airport']
-    depdate = body['departure_date']
-    retdate = body['return_date']
-    agegroup = body['age_group']
-    bookingclass = body['booking_class']
-    bookingid = randomString(8);
+    first_name = body['first_name']
+    last_name = body['last_name']
+    from_airport = body['from_airport']
+    to_airport = body['to_airport']
+    departure_date = body['departure_date']
+    return_date = body['return_date']
+    age_group = body['age_group']
+    booking_class = body['booking_class']
+    booking_number = randomString(8);
 
     # insert into DynamoDB
     table = dynamodb.Table(BOOKING_TABLE_NAME)
     response = table.put_item(
         Item={
-            'bookingid': bookingid,
-            'firstname': firstname,
-            'lastname': lastname,
-            'odfrom': odfrom,
-            'odto': odto,
-            'depdate': depdate,
-            'retdate': retdate,
-            'agegroup': agegroup,
-            'bookingclass': bookingclass
+            "booking_number": booking_number,
+            "age_group": age_group,
+            "first_name": first_name,
+            "last_name": last_name,
+            "from_airport": from_airport,
+            "to_airport": to_airport,
+            "departure_date": departure_date,
+            "return_date": return_date,
+            "booking_class": booking_class
+
         }
     )
     print("PutItem succeeded. Response is: " + str(response))
 
     sns_message = {
-        'bookingid': bookingid,
-        'odfrom': odfrom,
-        'odto': odto,
-        'flighttimestamp': depdate
+        'booking_number': booking_number,
+        'from_airport': from_airport,
+        'to_airport': to_airport,
+        'departure_date': departure_date
     }
     response = topic.publish(
         Message = json.dumps({'default': json.dumps(sns_message)}),

@@ -108,8 +108,7 @@ def cfn_handler(event, context, create, update, delete, logger, init_failed):
     logger.debug("EVENT: " + str(event))
     # handle init failures
     if init_failed:
-        send(event, context, "FAILED", responseData, physicalResourceId,
-             init_failed, logger=logger)
+        send(event, context, "FAILED", responseData, physicalResourceId, logger=logger, reason=init_failed)
         raise
 
     # Setup timer to catch timeouts
@@ -137,6 +136,5 @@ def cfn_handler(event, context, create, update, delete, logger, init_failed):
     # CloudFormation and then raise an exception
     except Exception as e:
         logger.error(e, exc_info=True)
-        send(event, context, "FAILED", responseData, physicalResourceId,
-             reason=e, logger=logger)
+        send(event, context, "FAILED", responseData, physicalResourceId, logger=logger, reason=e)
         raise

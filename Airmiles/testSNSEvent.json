@@ -10,7 +10,7 @@
         "Signature": "EXAMPLE",
         "SigningCertUrl": "EXAMPLE",
         "MessageId": "95df01b4-ee98-5cb9-9903-4c221d41eb5e",
-        "Message": "{\"bookingid\": 1234,\"from\": \"HKG\",\"to\": \"AKL\",\"flighttimestamp\": \"2017-03-07T19:27:00.000Z\"}",
+        "Message": "{\"booking_number\": 1234,\"from_airport\": \"HKG\",\"to_airport\": \"AKL\",\"departure_date\": \"2017-03-07T19:27:00.000Z\"}",
         "MessageAttributes": {
         },
         "Type": "Notification",
@@ -29,7 +29,7 @@
         "Signature": "EXAMPLE",
         "SigningCertUrl": "EXAMPLE",
         "MessageId": "95df01b4-ee98-5cb9-9903-4c221d41eb5e",
-        "Message": "{\"bookingid\": 5678,\"from\": \"TOK\",\"to\": \"BKK\",\"flighttimestamp\": \"2017-03-11T19:27:00.000Z\"}",
+        "Message": "{\"booking_number\": 5678,\"from_airport\": \"TOK\",\"to_airport\": \"BKK\",\"departure_date\": \"2017-03-11T19:27:00.000Z\"}",
         "MessageAttributes": {
         },
         "Type": "Notification",

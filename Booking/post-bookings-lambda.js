@@ -55,10 +55,10 @@ exports.handler = (event, context, callback) => {
           var sns = new AWS.SNS();
           var params = {
             Message: JSON.stringify({
-              bookingid: booking_number, 
-              from: from_airport, 
-              to: to_airport, 
-              flighttimestamp: departure_date
+              booking_number: booking_number,
+              from_airport: from_airport,
+              to_airport: to_airport,
+              departure_date: departure_date
             }, null, 2),
             TopicArn: BOOKING_SNS_ARN
           };

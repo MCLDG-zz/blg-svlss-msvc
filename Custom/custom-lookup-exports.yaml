@@ -19,7 +19,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: custom-lookup-exports.handler
-      Runtime: python2.7
+      Runtime: python3.6
       Description: custom lookup function, looks up stack exports values in other accounts (uses CustomCrossAccountServiceRole created in this stack for cross account permissions)
       CodeUri: ./
       MemorySize: 128
