@@ -25,6 +25,7 @@ print('Loading function')
 BOOKING_SNS_ARN = os.environ['BOOKING_SNS_ARN']
 BOOKING_TABLE_NAME = os.environ['BOOKING_TABLE_NAME']
 dynamodb = boto3.resource('dynamodb')
+table = dynamodb.Table(BOOKING_TABLE_NAME)
 sns = boto3.resource('sns')
 topic = sns.Topic(BOOKING_SNS_ARN)
 print("DynamoDB table name: " + BOOKING_TABLE_NAME)
@@ -37,8 +38,8 @@ def randomString(length):
 
 # triggered by API Gateway on receiving POST event from web application
 def handler(event, context):
-    print("From API G/W: " + event)
-    body = event['body']
+    print("From API G/W: " + str(event))
+    body = json.loads(event['body'])
     first_name = body['first_name']
     last_name = body['last_name']
     from_airport = body['from_airport']
@@ -50,7 +51,6 @@ def handler(event, context):
     booking_number = randomString(8);
 
     # insert into DynamoDB
-    table = dynamodb.Table(BOOKING_TABLE_NAME)
     response = table.put_item(
         Item={
             "booking_number": booking_number,
@@ -78,4 +78,10 @@ def handler(event, context):
         MessageStructure = 'json'
     )
 
-    return sns_message
+    return {
+        'statusCode': 200,
+        'body': json.dumps(sns_message),
+        'headers': {
+            'Content-Type': 'application/json',
+        },
+    }

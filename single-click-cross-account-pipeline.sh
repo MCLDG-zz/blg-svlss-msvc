@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
-ToolsAccount=295744685835
+ToolsAccount=123456789012
 ToolsAccountProfile=blog-tools
-BookingNonProdAccount=570833937993
+BookingNonProdAccount=123456789012
 BookingNonProdAccountProfile=blog-bookingnonprd
-AirmilesNonProdAccount=506709822501
+AirmilesNonProdAccount=123456789012
 AirmilesNonProdAccountProfile=blog-airmilesnonprd
 region=us-east-1
 AirmilesProject=airmiles
 BookingProject=booking
 WebProject=web
-S3_TMP_BUCKET=mcdg-blog-bucket
+S3_TMP_BUCKET=your-bucket-name
 
 #pre requisites for booking
 echo -e "creating pre-reqs stack for booking"
-aws cloudformation deploy --stack-name ${BookingProject}-pre-reqs --template-file ToolsAcct/pre-reqs.yaml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides ProjectName=$BookingProject NonProdAccount=$BookingNonProdAccount --profile $ToolsAccountProfile --region $region
+aws cloudformation deploy --stack-name ${BookingProject}-pre-reqs --template-file ToolsAcct/pre-reqs.yaml --capabilities CAPABILITY_NAMED_IAM --parameter-overrides ProjectName=$BookingProject NonProdAccount=$BookingNonProdAccount --profile $ToolsAccountProfile --region $region --debug
 BookingS3Bucket=$(aws cloudformation describe-stacks --stack-name ${BookingProject}-pre-reqs --profile $ToolsAccountProfile --region $region --query 'Stacks[0].Outputs[?OutputKey==`ArtifactBucket`].OutputValue' --output text)
 BookingCMKArn=$(aws cloudformation describe-stacks --stack-name ${BookingProject}-pre-reqs --profile $ToolsAccountProfile --region $region --query 'Stacks[0].Outputs[?OutputKey==`CMK`].OutputValue' --output text)
 echo -e "Booking S3 artifact bucket name: $BookingS3Bucket"

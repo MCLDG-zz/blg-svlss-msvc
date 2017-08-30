@@ -108,6 +108,32 @@ after posting to bookings, the booking information should flow via SNS to airmil
 curl https://4oiogvmtpa.execute-api.us-east-1.amazonaws.com/Prod/airmiles/7NIXnSSI
 ```
 
+### Troubleshooting
+If you receive an error, such as the one below, while running single-click-cross-account-pipeline.sh,  
+it could be related to the version of awscli you are using. For instance, I received the error below:
+
+```
+$ ./single-click-cross-account-pipeline.sh 
+creating pre-reqs stack for booking
+
+'list' object has no attribute 'split'
+```
+
+when using this version of the awscli:
+
+```
+$ aws --version
+aws-cli/1.11.44 Python/2.7.12 Linux/4.9.38-16.35.amzn1.x86_64 botocore/1.5.7
+```
+
+After upgrading awscli to the latest version, the issue was resolved:
+
+```
+$ aws --version
+aws-cli/1.11.142 Python/2.7.12 Linux/4.9.38-16.35.amzn1.x86_64 botocore/1.7.0
+```
+
+
 [code-commit-url]: https://aws.amazon.com/devops/continuous-delivery/
 [code-build-url]: https://aws.amazon.com/codebuild/
 [code-pipeline-url]: https://aws.amazon.com/codepipeline/

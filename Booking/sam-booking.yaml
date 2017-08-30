@@ -11,7 +11,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: get-bookings-lambda.handler
-      Runtime: nodejs4.3
+      Runtime: python3.6
       Policies: AmazonDynamoDBFullAccess
       Environment:
         Variables:
@@ -27,7 +27,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Handler: post-bookings-lambda.handler
-      Runtime: nodejs4.3
+      Runtime: python3.6
       Policies:
          - AmazonDynamoDBFullAccess
          - AmazonSNSFullAccess

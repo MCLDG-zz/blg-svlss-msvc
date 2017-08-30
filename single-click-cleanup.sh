@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
-ToolsAccount=295744685835
+ToolsAccount=123456789012
 ToolsAccountProfile=blog-tools
-BookingNonProdAccount=570833937993
+BookingNonProdAccount=123456789012
 BookingNonProdAccountProfile=blog-bookingnonprd
-AirmilesNonProdAccount=506709822501
+AirmilesNonProdAccount=123456789012
 AirmilesNonProdAccountProfile=blog-airmilesnonprd
 region=us-east-1
 AirmilesProject=airmiles
 BookingProject=booking
 WebProject=web
-S3_TMP_BUCKET=mcdg-blog-bucket
+S3_TMP_BUCKET=your-bucket-name
 
 # lambda stack created by pipeline in booking account
 echo -e "deleting lambda stack in booking account"
