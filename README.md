@@ -63,7 +63,7 @@ the blg-svlss-msvc.git repo (you may have to adjust the cp -R statement below if
 
 ```bash
 git clone <value of the SourceCodeCommitCloneUrlHttp stack output variable>
-cp -R blg-svlss-msvc/Booking/ <cloned repo directory>/
+cp -R blg-svlss-msvc/Booking/ <cloned repo directory>/   ### note that 'cp' works differently on Mac and Linux. In Linux you may have to use cp -R blg-svlss-msvc/Booking/* <cloned repo directory>/
 cd <cloned repo directory>
 git add .
 git commit -m 'new'
