@@ -1,0 +1,13 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - npm install
+      - npm build 
+      - aws s3 sync
+artifacts:
+  type: 
+  files:
+    - output-sam-template.yaml
+    - sam-config.json

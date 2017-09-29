@@ -1,0 +1,27 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Website Bucket
+Parameters:
+  BucketName:
+    Type: String
+    Description: Web Hosting Bucket Name
+  IndexDocument:
+    Type: String
+    Description: Path to Index document
+    Default: index.html
+Resources:
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      BucketName:
+        Ref: BucketName
+      WebsiteConfiguration:
+        IndexDocument:
+          Ref: IndexDocument
+Outputs:
+  WebURL:
+    Value:
+      Fn::GetAtt:
+      - WebsiteBucket
+      - WebsiteURL
