@@ -9,6 +9,9 @@ Parameters:
     Type: String
     Description: Path to Index document
     Default: index.html
+  ToolsAccount:
+    Type: Number
+    Description: AWS AccountNumber for the Tool Account that needs to upload website
 Resources:
   WebsiteBucket:
     Type: AWS::S3::Bucket
@@ -19,6 +22,32 @@ Resources:
       WebsiteConfiguration:
         IndexDocument:
           Ref: IndexDocument
+  BucketPolicy: 
+    Type: "AWS::S3::BucketPolicy"
+    Properties: 
+      Bucket: 
+        Ref: "WebsiteBucket"
+      PolicyDocument: 
+        Statement: 
+          - 
+            Action: 
+              - "s3:GetObject"
+              - "s3:PutObject"
+              - "s3:DeleteObject"
+              - "s3:PutObjectAcl"
+              - "s3:GetObjectAcl"
+            Effect: "Allow"
+            Resource: !Sub "arn:aws:s3:::${BucketName}/*"
+            Principal: 
+              AWS: !Sub arn:aws:iam::${ToolsAccount}:root
+          - 
+            Action: 
+              - "s3:ListBucket"
+            Effect: "Allow"
+            Resource: !Sub "arn:aws:s3:::${BucketName}"
+            Principal: 
+              AWS: !Sub arn:aws:iam::${ToolsAccount}:root
+
 Outputs:
   WebURL:
     Value:

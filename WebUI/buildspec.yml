@@ -4,10 +4,7 @@ phases:
   install:
     commands:
       - npm install
-      - npm build 
-      - aws s3 sync
-artifacts:
-  type: 
-  files:
-    - output-sam-template.yaml
-    - sam-config.json
+  build:
+    commands:
+      - npm run build
+      - aws s3 sync dist/ s3://yungkevi-serverless-demo01/ --acl public-read --delete

@@ -1,6 +1,6 @@
 import axios from 'axios';
-const bookingUrl = 'https://igz7ckmf26.execute-api.us-east-1.amazonaws.com';
-const MileagesUrl = 'https://wuliz0a178.execute-api.us-east-1.amazonaws.com';
+const bookingUrl = 'https://nm74c8rkh8.execute-api.us-east-1.amazonaws.com';
+const MileagesUrl = 'https://3mk0tf6z88.execute-api.us-east-1.amazonaws.com';
 class IO {
 	constructor() {
 	}
