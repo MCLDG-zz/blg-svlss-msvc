@@ -6,13 +6,26 @@
 # CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Looks up stack export values in CloudFormation stacks
+
+"""
+    File name: custom-lookup-exports.py
+    Author: Michael Edge
+    Date created: 11 July 2017
+    Python Version: 3.6
+
+    This Lambda is used as a CloudFormation custom resource that will lookup CloudFormation stack
+    exports in other accounts. This is useful if a resource in Account A needs to refer to a resource
+    in Account B.
+
+    For example, a Lambda in Account A wants to subscribe to an SNS Topic in Account B.
+"""
 
 from __future__ import print_function
 
 import crhelper
 import os
 import boto3
+
 
 # initialise logger
 print('Loading function')
@@ -87,9 +100,7 @@ def get_exports():
 
 
 def handler(event, context):
-    # update the logger with event info
     global logger
-#    logger = crhelper.log_config(event)
     print('CloudFormation event received: %s' % str(event))
 
     return crhelper.cfn_handler(event, context, create, update, delete, logger, init_failed)

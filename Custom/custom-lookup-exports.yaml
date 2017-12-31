@@ -8,7 +8,7 @@
 
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: custom lookup functions that retrieve stack resources, either by direct stack query or from DynamoDB
+Description: custom lookup function that retrieves stack resources from CloudFormation stacks in other accounts
 Parameters:
   CustomCrossAccountServiceRole:
     Description: Cross account role ARN assumed within the Custom Lambda to access stacks in different accounts
