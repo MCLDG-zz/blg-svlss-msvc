@@ -83,5 +83,6 @@ def handler(event, context):
         'body': json.dumps(sns_message),
         'headers': {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
         },
     }
