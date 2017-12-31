@@ -41,5 +41,6 @@ def handler(event, context):
         'body': json.dumps(response['Items']) if 'Items' in response else json.dumps({}),
         'headers': {
             'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
         },
     }

@@ -6,7 +6,7 @@
 
 #### 1. Pre-requisites
 
-You will need three AWS accounts. One for the CodePipelines, one for the Bookings microservice and one for the Airmiles microservice
+You will need four AWS accounts. One for the CodePipelines, one for the Bookings microservice and one for the Airmiles microservice and last one is for S3 website web interface.
 
 #### 2. Clone the sample Lambda function GitHub repository
 
@@ -38,6 +38,7 @@ BookingNonProdAccountProfile=<AWS profile for the Booking account, as defined in
 AirmilesNonProdAccount=<AWS 12 digit account number for the Airmiles account, where the Airmiles microservice will be deployed>
 AirmilesNonProdAccountProfile=<AWS profile for the Airmiles account, as defined in ~/.aws/credentials>
 region=<e.g. us-east-1. Must be a region where CodeCommit, CodePipeline, CodeBuild and other required services are supported)
+S3WebsiteBucketName=<a global available name of a bucket for website hosting>
 S3_TMP_BUCKET=<name of a bucket you have access to, that can be accessed by all three accounts>
 ```
 
@@ -107,6 +108,37 @@ after posting to bookings, the booking information should flow via SNS to airmil
 ```bash
 curl https://4oiogvmtpa.execute-api.us-east-1.amazonaws.com/Prod/airmiles/7NIXnSSI
 ```
+
+#### 9. Create S3 Website web interface
+
+In the AWS Console, in the Tools account, in the region specified in single-click-cross-account-pipeline.sh, select
+the CloudFormation service and find the 'webui-pipeline' stack.
+
+Copy the value of this stack output variable: SourceCodeCommitCloneUrlHttp
+In a directory in your terminal application where you want to clone the application repository, execute the commands below. 
+Note that this clones an empty GIT repo for the Web interface microservice, into which you'll copy the WebUI source code from 
+the blg-svlss-msvc.git repo (you may have to adjust the cp -R statement below if you use a different directory structure):
+
+```bash
+git clone <value of the SourceCodeCommitCloneUrlHttp stack output variable>
+cp -R blg-svlss-msvc/WebUI/ <cloned repo directory>/   ### note that 'cp' works differently on Mac and Linux. In Linux you may have to use cp -R blg-svlss-msvc/Booking/* <cloned repo directory>/
+cp -av blg-svlss-msvc/WebUI/.babelrc <cloned repo directory>/
+cd <cloned repo directory>
+cp src/widgets/axios.js.template src/widgets/axios.js
+```
+
+Note down both the Booking API endpoints and Airmiles API endpoint you used in previous steps. For example Booking API endpiint `https://lv71x6qei8.execute-api.us-east-1.amazonaws.com/Prod/bookings` and Airmile endpoint ` https://4oiogvmtpa.execute-api.us-east-1.amazonaws.com/Prod/airmiles/`. Edit file `src/widgets/axios.js` to include these two endpoints.
+
+```bash
+sed -i -e "s%BOOKING_URL%<the-bookibng-api-endpoing>%" src/widgets/axios.js
+sed -i -e "s%MILEAGES_URL%<the-airmile-api-endpoing>%" src/widgets/axios.js
+git add .
+git commit -m 'new'
+git push
+```
+
+Wait until the WebUI CodePipeline is complete, login to the Web Interface account, then the output values from the 'webui' stack contains the URL to access a serverless web interface.
+
 
 ### Troubleshooting
 If you receive an error, such as the one below, while running single-click-cross-account-pipeline.sh,  

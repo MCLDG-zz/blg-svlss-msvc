@@ -44,6 +44,6 @@ def handler(event, context):
     item = response["Item"] if ("Item" in response) else {}
     return {
         'statusCode': response['ResponseMetadata']['HTTPStatusCode'],
-        'headers': {'Content-Type': 'application/json'},
+        'headers': {'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*'},
         'body': json.dumps({"data": item})
     }

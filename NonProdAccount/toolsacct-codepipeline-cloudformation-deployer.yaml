@@ -113,6 +113,7 @@ Resources:
               - dynamodb:DeleteTable
               - dynamodb:DescribeTable
               - apigateway:*
+              - s3:*
             Resource: "*"
           -
             Effect: Allow
