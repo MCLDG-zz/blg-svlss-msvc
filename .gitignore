@@ -1,1 +1,13 @@
 me*
+Booking/sam-config.json
+s3-bucket-policy.json
+WebUI/S3-Bucket-config.json
+WebUI/buildspec.yml
+Custom/*/
+Custom/six.py*
+Custom
+./.DS_Store
+.DS_Store
+*.json-e
+*.yml-e
+.idea

@@ -28,7 +28,7 @@ Change into the cloned directory, and edit the file single-click-cross-account-p
 vi single-click-cross-account-pipeline.sh
 ```
 
-Change the following entries in lines 2-12, and save your changes:
+Change the following entries in lines 2-15, and save your changes:
 
 ```commandline
 ToolsAccount=<AWS 12 digit account number for the Tools account, where the CodePipelines will be deployed>
@@ -38,8 +38,8 @@ BookingNonProdAccountProfile=<AWS profile for the Booking account, as defined in
 AirmilesNonProdAccount=<AWS 12 digit account number for the Airmiles account, where the Airmiles microservice will be deployed>
 AirmilesNonProdAccountProfile=<AWS profile for the Airmiles account, as defined in ~/.aws/credentials>
 region=<e.g. us-east-1. Must be a region where CodeCommit, CodePipeline, CodeBuild and other required services are supported)
-S3WebsiteBucketName=<a global available name of a bucket for website hosting>
-S3_TMP_BUCKET=<name of a bucket you have access to, that can be accessed by all three accounts>
+S3WebsiteBucketName=<a global available name of a bucket for website hosting. This bucket name should not exist>
+S3TmpBucketName=<name of a temporary bucket created by the installation script and used during installation>
 ```
 
 #### 4. Execute single-click-cross-account-pipeline.sh
@@ -130,14 +130,15 @@ cp src/widgets/axios.js.template src/widgets/axios.js
 Note down both the Booking API endpoints and Airmiles API endpoint you used in previous steps. For example Booking API endpiint `https://lv71x6qei8.execute-api.us-east-1.amazonaws.com/Prod/bookings` and Airmile endpoint ` https://4oiogvmtpa.execute-api.us-east-1.amazonaws.com/Prod/airmiles/`. Edit file `src/widgets/axios.js` to include these two endpoints.
 
 ```bash
-sed -i -e "s%BOOKING_URL%<the-bookibng-api-endpoing>%" src/widgets/axios.js
-sed -i -e "s%MILEAGES_URL%<the-airmile-api-endpoing>%" src/widgets/axios.js
+sed -i -e "s%BOOKING_URL%<the-booking-api-endpoint>%" src/widgets/axios.js
+sed -i -e "s%MILEAGES_URL%<the-airmile-api-endpoint>%" src/widgets/axios.js
 git add .
 git commit -m 'new'
 git push
 ```
 
-Wait until the WebUI CodePipeline is complete, login to the Web Interface account, then the output values from the 'webui' stack contains the URL to access a serverless web interface.
+Wait until the WebUI CodePipeline is complete, login to the Web Interface account in the AWS Console, and find the output values from the 'webui' stack, which contains the URL to access the serverless web interface.
+Open the WebUI in a browser.
 
 
 ### Troubleshooting

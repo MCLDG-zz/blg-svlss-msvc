@@ -1,6 +1,6 @@
 {
     "Parameters": {
-        "NonProdAccount": "123456789012"
+        "NonProdAccount": "ACCOUNT-NUMBER"
     },
     "StackPolicy": {
         "Statement": [

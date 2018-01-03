@@ -324,7 +324,7 @@ Resources:
                 StackName: !Join ['-',[!Ref ProjectName, "WebUI"]]
                 Capabilities: CAPABILITY_NAMED_IAM
                 TemplatePath: SCCheckoutArtifact::S3-Bucket.template
-                TemplateConfiguration: SCCheckoutArtifact::sam-config.json
+                TemplateConfiguration: SCCheckoutArtifact::S3-Bucket-config.json
                 RoleArn: !Ref NonProdCloudFormationServiceRole
               InputArtifacts:
                 - Name: SCCheckoutArtifact

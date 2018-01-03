@@ -1,6 +1,7 @@
 {
     "Parameters": {
-        "NonProdAccount": "123456789012"
+        "BucketName": "WEBSITE_BUCKET_NAME",
+        "ToolsAccount": "TOOL-ACCOUNT-NUMBER"
     },
     "StackPolicy": {
         "Statement": [

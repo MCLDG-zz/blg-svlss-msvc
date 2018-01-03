@@ -7,4 +7,4 @@ phases:
   build:
     commands:
       - npm run build
-      - aws s3 sync dist/ s3://yungkevi-serverless-demo01/ --acl public-read --delete
+      - aws s3 sync dist/ s3://WEBSITE_BUCKET_NAME/ --acl public-read --delete
