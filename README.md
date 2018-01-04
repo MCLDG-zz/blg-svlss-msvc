@@ -6,7 +6,12 @@
 
 #### 1. Pre-requisites
 
-You will need four AWS accounts. One for the CodePipelines, one for the Bookings microservice and one for the Airmiles microservice and last one is for S3 website web interface.
+You will need three or four AWS accounts. 
+* a Tools account for the CodePipelines
+* a Booking account for the Bookings microservice
+* an Airmiles account for the Airmiles microservice
+* an S3-Bucket account for the S3 website web interface. If you want to use only three accounts, you can optionally deploy this to the 
+Tools account, i.e. the same account as the CodePipelines
 
 #### 2. Clone the sample Lambda function GitHub repository
 
@@ -39,7 +44,7 @@ AirmilesNonProdAccount=<AWS 12 digit account number for the Airmiles account, wh
 AirmilesNonProdAccountProfile=<AWS profile for the Airmiles account, as defined in ~/.aws/credentials>
 region=<e.g. us-east-1. Must be a region where CodeCommit, CodePipeline, CodeBuild and other required services are supported)
 S3WebsiteBucketName=<a global available name of a bucket for website hosting. This bucket name should not exist>
-S3TmpBucketName=<name of a temporary bucket created by the installation script and used during installation>
+S3TmpBucketName=<name of a temporary bucket created by the installation script and used during installation. This bucket name should not exist>
 ```
 
 #### 4. Execute single-click-cross-account-pipeline.sh
@@ -50,14 +55,15 @@ From your terminal application, execute the following command:
 ./single-click-cross-account-pipeline.sh
 ```
 
-This will create stacks in all three accounts. Wait until all stacks are successfully created.
+This will create stacks in all the accounts. Wait until all stacks are successfully created.
 
 #### 5. Copy the microservice source code and push to AWS CodeCommit
 
 In the AWS Console, in the Tools account, in the region specified in single-click-cross-account-pipeline.sh, select
 the CloudFormation service and find the 'booking-pipeline' stack.
 
-Copy the value of this stack output variable: SourceCodeCommitCloneUrlHttp
+Copy the value of this stack output variable: `SourceCodeCommitCloneUrlHttp`
+
 In a directory in your terminal application where you want to clone the application repository, execute the commands below. 
 Note that this clones an empty GIT repo for the Booking microservice, into which you'll copy the Booking source code from 
 the blg-svlss-msvc.git repo (you may have to adjust the cp -R statement below if you use a different directory structure):
@@ -91,7 +97,10 @@ output values from the 'airmiles-pipeline' stack. Change the folder in the 'cp' 
 #### 8. Confirm the API endpoints for Booking & Airmiles
 
 Using the stack output values from booking-lambda and airmiles-lambda (in the booking and airmiles accounts), get
-the value of the API endpoint (BookingAPI and AirmilesAPI). Check that you can POST a request to the API:
+the value of the API endpoints (BookingAPI and AirmileAPI). A script is provided that will print these out for you.
+Execute `get-api-endpoints.sh` (which you can find in the blg-svlss-msvc repo) after updating the parameter values in the script.
+
+Check that you can POST a request to the API:
 
 ```bash
 curl -H "Content-Type: application/json" -X POST -d '{"first_name":"Michael","last_name":"Surgeon","from_airport":"DEL","to_airport":"MEL","booking_class":"Economy","departure_date":"12/04/2017","return_date":"21/04/2017","age_group":"Adult"}' https://lv71x6qei8.execute-api.us-east-1.amazonaws.com/Prod/bookings
@@ -111,12 +120,13 @@ curl https://4oiogvmtpa.execute-api.us-east-1.amazonaws.com/Prod/airmiles/7NIXnS
 
 #### 9. Create S3 Website web interface
 
-In the AWS Console, in the Tools account, in the region specified in single-click-cross-account-pipeline.sh, select
-the CloudFormation service and find the 'webui-pipeline' stack.
+The WebUI website is hosted in S3. In the AWS Console, in the Tools account, in the region specified in 
+single-click-cross-account-pipeline.sh, select the CloudFormation service and find the 'webui-pipeline' stack.
 
-Copy the value of this stack output variable: SourceCodeCommitCloneUrlHttp
+Copy the value of this stack output variable: `SourceCodeCommitCloneUrlHttp`
+
 In a directory in your terminal application where you want to clone the application repository, execute the commands below. 
-Note that this clones an empty GIT repo for the Web interface microservice, into which you'll copy the WebUI source code from 
+Note that this clones an empty GIT repo for the Web interface, into which you'll copy the WebUI source code from 
 the blg-svlss-msvc.git repo (you may have to adjust the cp -R statement below if you use a different directory structure):
 
 ```bash
@@ -124,20 +134,39 @@ git clone <value of the SourceCodeCommitCloneUrlHttp stack output variable>
 cp -R blg-svlss-msvc/WebUI/ <cloned repo directory>/   ### note that 'cp' works differently on Mac and Linux. In Linux you may have to use cp -R blg-svlss-msvc/Booking/* <cloned repo directory>/
 cp -av blg-svlss-msvc/WebUI/.babelrc <cloned repo directory>/
 cd <cloned repo directory>
-cp src/widgets/axios.js.template src/widgets/axios.js
 ```
 
-Note down both the Booking API endpoints and Airmiles API endpoint you used in previous steps. For example Booking API endpiint `https://lv71x6qei8.execute-api.us-east-1.amazonaws.com/Prod/bookings` and Airmile endpoint ` https://4oiogvmtpa.execute-api.us-east-1.amazonaws.com/Prod/airmiles/`. Edit file `src/widgets/axios.js` to include these two endpoints.
+Before pushing the website code to the CodeCommit repo we need to update the API endpoints to ensure the WebUI points
+to the Booking and Airmiles microservice endpoints. This can be done manually, or you can use the script provided 
+for you. In both cases you need to be in the cloned WebUI repo directory.
+
+If you are using the script, update the parameter values in the script `update-webui-config.sh`, then do the following:
 
 ```bash
-sed -i -e "s%BOOKING_URL%<the-booking-api-endpoint>%" src/widgets/axios.js
-sed -i -e "s%MILEAGES_URL%<the-airmile-api-endpoint>%" src/widgets/axios.js
+./update-webui-config.sh
 git add .
 git commit -m 'new'
 git push
 ```
 
-Wait until the WebUI CodePipeline is complete, login to the Web Interface account in the AWS Console, and find the output values from the 'webui' stack, which contains the URL to access the serverless web interface.
+If you want to update the WebUI config manually, do the following:
+* Note down both the Booking and Airmiles API endpoints from step 8 above. 
+* For example, the Booking API endpoint would look something like this: `https://lv71x6qei8.execute-api.us-east-1.amazonaws.com`.
+* Replace the placeholders in the bash script below with the actual API endpoints. For example, replace `<the-booking-api-endpoint>`
+with `https://lv71x6qei8.execute-api.us-east-1.amazonaws.com` 
+* Run the shell commands below
+
+```bash
+cp src/widgets/axios.js.template src/widgets/axios.js
+sed -i -e "s%BOOKING_URL%<the-booking-api-endpoint>%" src/widgets/axios.js
+sed -i -e "s%AIRMILES_URL%<the-airmile-api-endpoint>%" src/widgets/axios.js
+git add .
+git commit -m 'new'
+git push
+```
+
+Wait until the WebUI CodePipeline is complete, login to the Web Interface account in the AWS Console, and find the WebURL 
+output value from the 'webui-WebUI' stack, which contains the URL to access the serverless web interface.
 Open the WebUI in a browser.
 
 

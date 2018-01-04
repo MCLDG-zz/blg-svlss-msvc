@@ -1,11 +1,11 @@
 import axios from 'axios';
 const bookingUrl = 'BOOKING_URL';
-const MileagesUrl = 'MILEAGES_URL';
+const airmilesUrl = 'AIRMILES_URL';
 class IO {
 	constructor() {
 	}
 	getMileage(id){
-		return axios.get(MileagesUrl+'/Prod/airmiles/'+id);
+		return axios.get(airmilesUrl+'/Prod/airmiles/'+id);
 	}
 	getTickets(){
 		return axios.get(bookingUrl+'/Prod/bookings');
