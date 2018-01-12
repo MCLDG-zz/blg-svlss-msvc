@@ -125,6 +125,12 @@ Resources:
             Resource:
              - !Join ['',['arn:aws:s3:::',!Ref S3Bucket, '/*']]
              - !Join ['',['arn:aws:s3:::',!Ref S3Bucket]]
+          -
+            Effect: Allow
+            Action:
+              - sns:ListSubscriptionsByTopic
+            Resource:
+             - !Sub arn:aws:sns:${AWS::Region}:${NonProdAccount}:*
       Roles:
         -
           !Ref CloudFormationServiceRole

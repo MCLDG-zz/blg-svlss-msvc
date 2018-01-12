@@ -321,7 +321,7 @@ Resources:
               Configuration:
                 ChangeSetName: !Join ['-',[!Ref ProjectName, 'CS']]
                 ActionMode: CHANGE_SET_REPLACE
-                StackName: !Join ['-',[!Ref ProjectName, "WebUI"]]
+                StackName: !Join ['-',[!Ref ProjectName, "s3-website-bucket"]]
                 Capabilities: CAPABILITY_NAMED_IAM
                 TemplatePath: SCCheckoutArtifact::S3-Bucket.template
                 TemplateConfiguration: SCCheckoutArtifact::S3-Bucket-config.json
@@ -338,7 +338,7 @@ Resources:
               Configuration:
                 ChangeSetName: !Join ['-',[!Ref ProjectName, 'CS']]
                 ActionMode: CHANGE_SET_EXECUTE
-                StackName: !Join ['-',[!Ref ProjectName, 'WebUI']]
+                StackName: !Join ['-',[!Ref ProjectName, 's3-website-bucket']]
               InputArtifacts:
                 - Name: SCCheckoutArtifact
               RunOrder: 2

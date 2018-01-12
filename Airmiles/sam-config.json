@@ -1,0 +1,15 @@
+{
+    "Parameters": {
+        "NonProdAccount": "570833937993"
+    },
+    "StackPolicy": {
+        "Statement": [
+            {
+                "Action": "Update:*",
+                "Effect": "Allow",
+                "Principal": "*",
+                "Resource": "*"
+            }
+        ]
+    }
+}

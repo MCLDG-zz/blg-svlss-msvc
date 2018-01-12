@@ -62,7 +62,6 @@ section{}
 	color: #fff;
 }
 .bookingWarp select option{
-	color: #29abe2;
 	border: 0;
 }
 .bookingWarp input[type="checkbox"]{
@@ -146,7 +145,7 @@ section{}
 	border-bottom: 1px solid #fff;
 	cursor: pointer;
 	box-shadow: none;;
-} 
+}
 .bookingWarp .date_block:last-child{
 	margin: 0;
 }
@@ -166,7 +165,7 @@ section{}
 	cursor: pointer;
 }
 .bookingWarp .submit_block button:hover{
-	background-color: #fbff00; 
+	background-color: #fbff00;
 }
 .bookingWarp .submit_block button i{
 	margin-left: 13px;

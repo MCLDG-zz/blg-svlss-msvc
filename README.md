@@ -70,15 +70,17 @@ the blg-svlss-msvc.git repo (you may have to adjust the cp -R statement below if
 
 ```bash
 git clone <value of the SourceCodeCommitCloneUrlHttp stack output variable>
-cp -R blg-svlss-msvc/Booking/ <cloned repo directory>/   ### note that 'cp' works differently on Mac and Linux. In Linux you may have to use cp -R blg-svlss-msvc/Booking/* <cloned repo directory>/
+cp -R blg-svlss-msvc/Booking/* <cloned repo directory>/   ### note that 'cp' works differently on Mac and Linux, as well as in some shells. In Linux you may have to use cp -R blg-svlss-msvc/Booking/* <cloned repo directory>/
 cd <cloned repo directory>
+git remote -v
 git add .
 git commit -m 'new'
 git push
 ```
 
 It's quite important to use the 'cp' command as specified above, to make sure you do not overwrite the .git file that will already
-exist in the directory you cloned into.
+exist in the directory you cloned into. Check the output of the `git remote -v` command to ensure that Git is pointing
+to the correct repository. If your `cp` command overwrote the .git directory, you may see the original repo here, which is incorrect.
 
 This will push the source code for the Booking microservice to CodeCommit, and trigger the booking CodePipeline. You can
 find the CodePipeline in the AWS console by clicking the value of the PipelineUrl stack output variable in the 'booking-pipeline' stack
@@ -91,7 +93,8 @@ deployment.
 
 #### 7. Repeat steps 5 & 6 for the Airmiles microservice
 
-Wait until the Booking CodePipeline is complete, then repeat steps 5 & 6 for the Airmiles microservice, using the stack
+Wait until the Booking CodePipeline is complete - you need to do this because the Airmiles service will lookup the 
+Booking CloudFormation stack during deployment. Repeat steps 5 & 6 for the Airmiles microservice, using the stack
 output values from the 'airmiles-pipeline' stack. Change the folder in the 'cp' statement from Booking to Airmiles.
 
 #### 8. Confirm the API endpoints for Booking & Airmiles
@@ -120,6 +123,8 @@ curl https://4oiogvmtpa.execute-api.us-east-1.amazonaws.com/Prod/airmiles/7NIXnS
 
 #### 9. Create S3 Website web interface
 
+You'll need the Booking and Airmiles API endpoints for this step, so complete step 8 before moving on.
+
 The WebUI website is hosted in S3. In the AWS Console, in the Tools account, in the region specified in 
 single-click-cross-account-pipeline.sh, select the CloudFormation service and find the 'webui-pipeline' stack.
 
@@ -131,7 +136,7 @@ the blg-svlss-msvc.git repo (you may have to adjust the cp -R statement below if
 
 ```bash
 git clone <value of the SourceCodeCommitCloneUrlHttp stack output variable>
-cp -R blg-svlss-msvc/WebUI/ <cloned repo directory>/   ### note that 'cp' works differently on Mac and Linux. In Linux you may have to use cp -R blg-svlss-msvc/Booking/* <cloned repo directory>/
+cp -R blg-svlss-msvc/WebUI/* <cloned repo directory>/   ### note that 'cp' works differently on Mac and Linux. In Linux you may have to use cp -R blg-svlss-msvc/Booking/* <cloned repo directory>/
 cp -av blg-svlss-msvc/WebUI/.babelrc <cloned repo directory>/
 cd <cloned repo directory>
 ```
@@ -167,8 +172,23 @@ git push
 
 Wait until the WebUI CodePipeline is complete, login to the Web Interface account in the AWS Console, and find the WebURL 
 output value from the 'webui-WebUI' stack, which contains the URL to access the serverless web interface.
-Open the WebUI in a browser.
+Open the WebUI in a browser. 
 
+After booking a flight you should see the flight booking and the associated airmiles
+in a list at the bottom of the page (you may need to scroll the web page). Your flight booking was sent to the Booking
+microservice, which stored the booking and published an event to SNS. The airmiles microservice consumed the flight
+booking event and calculated the airmiles (just a random calculation, no intelligence) and stored the airmiles. The
+web application queries both APIs to populate the list of flight bookings. The web application, booking and airmiles 
+services all run in separate AWS accounts.
+
+### Cleanup
+Run the script below to remove all the stacks and associated AWS resources. I do attempt to delete the S3 buckets, though
+cleanup may fail if the S3 buckets can't be emptied. If necessary, you can easily empty the bucket referenced by the 
+`S3WebsiteBucketName` parameter in the AWS Console:
+
+```
+$ ./single-click-cleanup.sh 
+```
 
 ### Troubleshooting
 If you receive an error, such as the one below, while running single-click-cross-account-pipeline.sh,  
@@ -194,7 +214,6 @@ After upgrading awscli to the latest version, the issue was resolved:
 $ aws --version
 aws-cli/1.11.142 Python/2.7.12 Linux/4.9.38-16.35.amzn1.x86_64 botocore/1.7.0
 ```
-
 
 [code-commit-url]: https://aws.amazon.com/devops/continuous-delivery/
 [code-build-url]: https://aws.amazon.com/codebuild/
