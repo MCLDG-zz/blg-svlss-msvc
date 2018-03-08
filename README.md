@@ -11,7 +11,7 @@ You will need three or four AWS accounts.
 * a Booking account for the Bookings microservice
 * an Airmiles account for the Airmiles microservice
 * an S3-Bucket account for the S3 website web interface. If you want to use only three accounts, you can optionally deploy this to the 
-Tools account, i.e. the same account as the CodePipelines
+Tools account, i.e. the same account as the CodePipelines. The website S3 bucket will be created in this account.
 
 #### 2. Clone the sample Lambda function GitHub repository
 
