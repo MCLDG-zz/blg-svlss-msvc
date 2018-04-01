@@ -176,6 +176,7 @@ Resources:
               - cloudformation:ExecuteChangeSet
               - cloudformation:SetStackPolicy
               - cloudformation:ValidateTemplate
+              - iam:PassRole
               - s3:ListAllMyBuckets
               - s3:GetBucketLocation
             Resource:
